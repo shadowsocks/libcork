@@ -9,6 +9,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <syslog.h>
 
 #include "libcork/core/callbacks.h"
 #include "libcork/core/hash.h"
@@ -275,7 +276,13 @@ static void
 cork_hash_table_rehash(struct cork_hash_table *table)
 {
     DEBUG("    Reached maximum density; rehash");
+    syslog(LOG_NOTICE,
+           "[cht] Resizing hash table. Bin count: %zu, Entry count: %zu",
+           table->bin_count, table->entry_count);
     cork_hash_table_ensure_size(table, table->bin_count + 1);
+    syslog(LOG_NOTICE,
+           "[cht] Hash table resized. Bin count: %zu, Entry count: %zu",
+           table->bin_count, table->entry_count);
 }
 
 
