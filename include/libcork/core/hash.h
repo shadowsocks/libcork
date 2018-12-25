@@ -19,6 +19,7 @@
 
 /* Needed for memcpy */
 #include <string.h>
+#include <stdlib.h>
 
 #ifndef CORK_HASH_ATTRIBUTES
 #define CORK_HASH_ATTRIBUTES  CORK_ATTR_UNUSED static inline
@@ -345,7 +346,18 @@ cork_hash_buffer(cork_hash seed, const void *src, size_t len)
     return cork_u128_be32(hash.u128, 0);
 #else
     cork_hash  hash = 0;
+#ifdef __ANDROID__
+    // Enforce 16-byte alignment for murmur hash function
+    void *tmp;
+    int err = posix_memalign(&tmp, 16, len);
+    if (err == 0) {
+        memcpy(tmp, src, len);
+        cork_murmur_hash_x86_32(seed, tmp, (unsigned int)len, &hash);
+        free(tmp);
+    }
+#else
     cork_murmur_hash_x86_32(seed, src, (unsigned int)len, &hash);
+#endif
     return hash;
 #endif
 }
