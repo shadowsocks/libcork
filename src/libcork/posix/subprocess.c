@@ -460,7 +460,7 @@ cork_subprocess_start(struct cork_subprocess *self)
 #if defined(__APPLE__)
 #include <pthread.h>
 #define THREAD_YIELD   pthread_yield_np
-#elif defined(__linux__) || defined(BSD) || defined(__FreeBSD_kernel__) || defined(__GNU__) || defined(__CYGWIN__)
+#elif defined(__linux__) || defined(BSD) || defined(__FreeBSD_kernel__) || defined(__GNU__) || defined(__CYGWIN__) || defined(__sun)
 #include <sched.h>
 #define THREAD_YIELD   sched_yield
 #else
